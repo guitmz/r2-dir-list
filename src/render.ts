@@ -98,11 +98,13 @@ var renderTemplBreadcrumbs = (path: string) => {
 var renderTemplFolders = (folders: string[], siteConfig: SiteConfig) => {
     if (typeof folders === 'undefined') return '';
     var output = '';
+    const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
+    const sortedFolders = folders.sort((a, b) => collator.compare(a, b));
     for (var i = 0; i < folders.length; i++) {
         output += `<tr class="file ">
                             <td class="hideable"></td>
-                            <td class="name"><a href="/${folders[i]}"><svg width="1.5em" height="1em" version="1.1" viewBox="0 0 317 259"><use xlink:href="#folder"></use></svg><span class="name">${cleanFolderName(folders[i])}</span></a></td>
-                            <td class="description">${findDesp(siteConfig, '/' + folders[i].slice(0, -1), true) ?? '&mdash;'}</td>
+                            <td class="name"><a href="/${sortedFolders[i]}"><svg width="1.5em" height="1em" version="1.1" viewBox="0 0 317 259"><use xlink:href="#folder"></use></svg><span class="name">${cleanFolderName(folders[i])}</span></a></td>
+                            <td class="description">${findDesp(siteConfig, '/' + sortedFolders[i].slice(0, -1), true) ?? '&mdash;'}</td>
                             <td class="size">&mdash;</td>
                             <td class="date hideable">&mdash;</td>
                             <td class="hideable"></td>
@@ -114,13 +116,15 @@ var renderTemplFolders = (folders: string[], siteConfig: SiteConfig) => {
 var renderTemplFiles = (files: R2Object[], siteConfig: SiteConfig) => {
     if (typeof files === 'undefined') return '';
     var output = '';
+    const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
+    const sortedFiles = files.sort((a, b) => collator.compare(a.key, b.key));
     for (var i = 0; i < files.length; i++) {
         output += `<tr class="file ">
                             <td class="hideable"></td>
-                            <td class="name"><a href="/${files[i].key}"><svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323"><use xlink:href="#file"></use></svg><span class="name">${cleanFileName(files[i].key)}</span></a></td>
-                            <td class="description">${findDesp(siteConfig, '/' + files[i].key, true) ?? '&mdash;'}</td>
-                            <td class="size">${humanFileSize(files[i].size)}</td>
-                            <td class="date hideable"><time datetime="${files[i].uploaded.toUTCString()}">${files[i].uploaded.toJSON()}</time></td>
+                            <td class="name"><a href="/${sortedFiles[i].key}"><svg width="1.5em" height="1em" version="1.1" viewBox="0 0 265 323"><use xlink:href="#file"></use></svg><span class="name">${cleanFileName(files[i].key)}</span></a></td>
+                            <td class="description">${findDesp(siteConfig, '/' + sortedFiles[i].key, true) ?? '&mdash;'}</td>
+                            <td class="size">${humanFileSize(sortedFiles[i].size)}</td>
+                            <td class="date hideable"><time datetime="${sortedFiles[i].uploaded.toUTCString()}">${sortedFiles[i].uploaded.toJSON()}</time></td>
                             <td class="hideable"></td>
                         </tr>`;
     }
